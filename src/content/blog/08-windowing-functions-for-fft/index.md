@@ -24,6 +24,9 @@ FFT 전에 신호에 곱하는 함수. 양 끝을 부드럽게 0으로 눌러줘
 
 ## 4가지 주요 Window 함수
 
+![Window Functions Comparison](./images/fig1_window_comparison.png)
+*왼쪽: 시간영역에서 각 window의 모양. 오른쪽: 주파수영역(dB)에서 main lobe 폭과 side lobe 높이 차이.*
+
 ### 1. Rectangular (사각 윈도우)
 
 ```
@@ -31,6 +34,8 @@ w(n) = 1
 ```
 
 사실상 윈도우를 안 쓰는 것. Main lobe가 가장 좁아서 주파수 분해능이 최고지만, side lobe가 가장 높아서 spectral leakage가 최악.
+
+![Rectangular Window](./images/fig2_rectangular.png)
 
 ### 2. Hann
 
@@ -48,6 +53,9 @@ w(n) = 0.54 - 0.46 * cos(2*pi*n / (N-1))
 
 Hann이랑 비슷하지만 양 끝이 완전히 0이 아니라 약 0.08에서 멈춤. 첫 번째 side lobe가 Hann보다 낮아서 인접 주파수 간섭 억제에 유리.
 
+![Hann & Hamming](./images/fig3_hann_hamming.png)
+*Hann(빨간)은 양 끝이 0, Hamming(파란 점선)은 0.08에서 멈춤.*
+
 ### 4. Blackman
 
 ```
@@ -55,6 +63,8 @@ w(n) = 0.42 - 0.5 * cos(2*pi*n / (N-1)) + 0.08 * cos(4*pi*n / (N-1))
 ```
 
 cos 항이 2개. Hann이 종 모양이라면 Blackman은 **더 날카로운 종**. 양 끝이 더 급하게 눌려서 side lobe가 최저 — leakage 거의 없음. 대신 main lobe가 가장 넓어서 분해능 손해가 가장 크다. 약한 신호를 강한 신호 옆에서 찾아야 할 때 유용.
+
+![Blackman Window](./images/fig4_blackman.png)
 
 ---
 
@@ -66,6 +76,9 @@ Blackman: w = 0.42 - 0.5 * cos(2*pi*n/N) + 0.08 * cos(4*pi*n/N)  <- cos 2개
 ```
 
 Blackman의 추가 `cos(4*pi*n/N)` 항이 양 끝을 추가로 억제한다. 시간영역에서 보면 Hann보다 경사가 더 급하고, 주파수영역에서 보면 side lobe가 훨씬 낮다.
+
+![Hann vs Blackman](./images/fig5_hann_blackman.png)
+*Hann(빨간) vs Blackman(파란 점선). Blackman이 양 끝에서 더 급하게 눌리는 차이가 보인다.*
 
 ---
 
