@@ -2,8 +2,8 @@ import type { Site, Page, Links, Socials } from "@types"
 
 // Global
 export const SITE: Site = {
-  TITLE: "Seungjun Heo",
-  DESCRIPTION: "Personal blog of Seungjun Heo — notes on aerospace engineering, GNSS, and things I find interesting.",
+  TITLE: "PullyZone",
+  DESCRIPTION: "PullyZone — Seungjun Heo의 개인 블로그. 항공우주·GNSS·사이드 프로젝트·잡다한 생각들.",
   AUTHOR: "Seungjun Heo",
 }
 
