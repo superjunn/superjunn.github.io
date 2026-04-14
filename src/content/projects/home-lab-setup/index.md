@@ -4,12 +4,9 @@ summary: "24/7 켜둔 라즈베리파이를 게이트웨이로 두고, 데탑은
 date: "Apr 12 2026"
 draft: false
 tags:
-- Raspberry Pi
 - Home Lab
+- Raspberry Pi
 - Networking
-- systemd
-- DuckDNS
-- Nginx
 ---
 
 ## 전체 그림

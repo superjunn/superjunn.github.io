@@ -4,13 +4,9 @@ summary: "매일 아침 7:30, 라즈베리파이가 데탑을 깨우고 FC Onlin
 date: "Apr 13 2026"
 draft: false
 tags:
-- Automation
-- Python
+- Home Automation
 - Raspberry Pi
 - Claude Code
-- Windows
-- SendInput
-- Home Lab
 ---
 
 ## 하기 싫은데 매일 해야 되는 일
