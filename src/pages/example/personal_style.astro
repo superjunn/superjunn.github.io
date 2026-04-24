@@ -1,0 +1,503 @@
+---
+// Independent design experiment — Personal Blog style (Wix template 02 "Train of Thought" feel)
+// Not connected to the main site's layout or content.
+
+const featured = {
+  label: "FEATURED POST",
+  date: "Jan 7",
+  readTime: "7 min",
+  title: "Back to Fiction: What I'm Reading This Summer",
+  excerpt:
+    "Create a blog post subtitle that summarizes your post in a few short, punchy sentences and entices your audience to continue reading...",
+  image:
+    "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1200&q=80",
+}
+
+const posts = [
+  {
+    date: "Jan 7",
+    readTime: "1 min",
+    title: "Top 5 Items Under $20 I Can't Live Without",
+    excerpt:
+      "Create a blog post subtitle that summarizes your post in a few short, punchy sentences and...",
+    image:
+      "https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=600&q=80",
+    views: 0,
+    comments: 0,
+    likes: 15,
+  },
+  {
+    date: "Jan 7",
+    readTime: "2 min",
+    title: "5 Pizza Places You Must Know",
+    excerpt:
+      "Create a blog post subtitle that summarizes your post in a few short, punchy sentences and...",
+    image:
+      "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=80",
+    views: 0,
+    comments: 0,
+    likes: 11,
+  },
+  {
+    date: "Jan 7",
+    readTime: "1 min",
+    title: "This Artist Will Blow Your Mind",
+    excerpt:
+      "Create a blog post subtitle that summarizes your post in a few short, punchy sentences and...",
+    image:
+      "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&q=80",
+    views: 0,
+    comments: 0,
+    likes: 7,
+  },
+  {
+    date: "Jan 7",
+    readTime: "1 min",
+    title: "5 Questions to Ask Yourself Before Getting Married",
+    excerpt:
+      "Create a blog post subtitle that summarizes your post in a few short, punchy sentences and...",
+    image:
+      "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80",
+    views: 0,
+    comments: 0,
+    likes: 8,
+  },
+  {
+    date: "Jan 7",
+    readTime: "2 min",
+    title: "Movies That Need to Be Seen on the Big Screen",
+    excerpt:
+      "Create a blog post subtitle that summarizes your post in a few short, punchy sentences and...",
+    image:
+      "https://images.unsplash.com/photo-1585647347384-2593bc35786b?w=600&q=80",
+    views: 0,
+    comments: 0,
+    likes: 6,
+  },
+]
+
+const follow = [
+  "https://images.unsplash.com/photo-1506260408121-e353d10b87c7?w=200&q=80",
+  "https://images.unsplash.com/photo-1502982720700-bfff97f2ecac?w=200&q=80",
+  "https://images.unsplash.com/photo-1527224857830-43a7acc85260?w=200&q=80",
+  "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=200&q=80",
+  "https://images.unsplash.com/photo-1490971774229-fe84f432a403?w=200&q=80",
+  "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=200&q=80",
+  "https://images.unsplash.com/photo-1529338296731-c4280a44fc48?w=200&q=80",
+  "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=200&q=80",
+  "https://images.unsplash.com/photo-1525268771113-32d9e9021a97?w=200&q=80",
+  "https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=200&q=80",
+]
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Train of Thought — Example</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="frame">
+      <article class="paper">
+        <header class="site-head">
+          <p class="tagline">EVERYTHING IS PERSONAL. INCLUDING THIS BLOG.</p>
+          <h1 class="brand">Train of Thought</h1>
+          <nav class="topnav">
+            <ul>
+              <li><a href="#" class="active">Home</a></li>
+              <li><a href="#">About</a></li>
+              <li><a href="#">My Blog</a></li>
+              <li><a href="#">Contact</a></li>
+            </ul>
+            <div class="socials">
+              <span>f</span><span>◎</span><span>t</span><span>p</span>
+            </div>
+          </nav>
+        </header>
+
+        <section class="featured">
+          <div class="featured-card">
+            <div class="featured-label">{featured.label}</div>
+            <img src={featured.image} alt="featured" />
+            <div class="featured-meta">
+              <p class="meta-line">{featured.date} · {featured.readTime}</p>
+              <h2>{featured.title}</h2>
+              <p class="excerpt">{featured.excerpt}</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="subscribe-bar">
+          <h3>Never Miss a New Post.</h3>
+          <form>
+            <label>Enter your email *</label>
+            <div class="sub-row">
+              <input type="email" />
+              <button type="button">Subscribe</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="main-grid">
+          <div class="posts">
+            <p class="col-label">TRAIN OF THOUGHT</p>
+            {
+              posts.map((p) => (
+                <article class="post-card">
+                  <img src={p.image} alt={p.title} />
+                  <div class="card-body">
+                    <p class="meta-line">
+                      {p.date} · {p.readTime}
+                    </p>
+                    <h4>{p.title}</h4>
+                    <p class="excerpt">{p.excerpt}</p>
+                    <p class="reactions">
+                      <span>{p.views} views</span>
+                      <span>{p.comments} comments</span>
+                      <span class="heart">♡ {p.likes}</span>
+                    </p>
+                  </div>
+                </article>
+              ))
+            }
+          </div>
+
+          <aside class="sidebar">
+            <div class="about">
+              <p class="col-label">ABOUT ME</p>
+              <img
+                class="avatar"
+                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80"
+                alt="author"
+              />
+              <p class="about-text">
+                I'm a paragraph. Click here to add your own text and edit me.
+                It's easy. Just click "Edit Text" or double click me to add
+                your own content and make changes to the font. I'm a great
+                place for you to tell a story and let your users know a little
+                more about you.
+              </p>
+              <a href="#" class="read-more">Read More &gt;</a>
+            </div>
+
+            <div class="follow">
+              <p class="col-label">FOLLOW ME</p>
+              <div class="follow-grid">
+                {follow.map((u) => <img src={u} alt="follow" />)}
+              </div>
+              <div class="socials side">
+                <span>f</span><span>◎</span><span>t</span><span>p</span>
+              </div>
+            </div>
+
+            <div class="sub-side">
+              <p class="col-label">SUBSCRIBE</p>
+              <label>Enter your email *</label>
+              <input type="email" />
+              <button type="button">Subscribe</button>
+            </div>
+          </aside>
+        </section>
+      </article>
+    </div>
+
+    <style is:global>
+      :root {
+        --lavender: #d9ceff;
+        --purple: #6c2bd9;
+        --ink: #111;
+        --muted: #888;
+        --line: #ebebeb;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--lavender);
+        font-family: "Inter", system-ui, sans-serif;
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+        padding: 40px 16px;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      img {
+        display: block;
+        max-width: 100%;
+      }
+      ul {
+        list-style: none;
+      }
+
+      .frame {
+        max-width: 960px;
+        margin: 0 auto;
+      }
+      .paper {
+        background: #fff;
+      }
+
+      /* header */
+      .site-head {
+        padding: 36px 40px 0;
+        text-align: center;
+      }
+      .tagline {
+        font-size: 11px;
+        letter-spacing: 0.35em;
+        color: var(--ink);
+        font-weight: 400;
+      }
+      .brand {
+        font-family: "Playfair Display", serif;
+        font-weight: 900;
+        font-size: 64px;
+        letter-spacing: -0.01em;
+        margin: 18px 0 28px;
+      }
+      .topnav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        padding: 14px 0;
+      }
+      .topnav ul {
+        display: flex;
+        gap: 42px;
+        margin: 0 auto;
+      }
+      .topnav li a {
+        font-size: 12px;
+        letter-spacing: 0.12em;
+      }
+      .topnav .active {
+        color: var(--purple);
+      }
+      .socials {
+        position: absolute;
+        right: 40px;
+        display: flex;
+        gap: 10px;
+        font-size: 13px;
+      }
+      .topnav {
+        position: relative;
+      }
+
+      /* featured */
+      .featured {
+        padding: 40px 40px 0;
+      }
+      .featured-card {
+        border: 1px solid var(--line);
+        padding: 20px;
+        position: relative;
+      }
+      .featured-label {
+        position: absolute;
+        top: -14px;
+        left: 20px;
+        background: #fff;
+        border: 1px solid var(--line);
+        padding: 6px 14px;
+        font-size: 11px;
+        letter-spacing: 0.25em;
+      }
+      .featured-card img {
+        width: 100%;
+        aspect-ratio: 16/9;
+        object-fit: cover;
+        background: #d0e8e8;
+      }
+      .featured-meta {
+        padding-top: 18px;
+      }
+      .featured-meta h2 {
+        font-family: "Playfair Display", serif;
+        font-size: 20px;
+        margin-bottom: 6px;
+      }
+      .meta-line {
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+      .excerpt {
+        font-size: 13px;
+        color: #555;
+        line-height: 1.55;
+      }
+
+      /* subscribe bar */
+      .subscribe-bar {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        align-items: end;
+        padding: 40px;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        margin: 40px 0;
+      }
+      .subscribe-bar h3 {
+        font-family: "Playfair Display", serif;
+        font-weight: 700;
+        font-size: 22px;
+      }
+      .subscribe-bar label {
+        display: block;
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+      .sub-row {
+        display: flex;
+        gap: 10px;
+      }
+      .subscribe-bar input {
+        flex: 1;
+        border: none;
+        border-bottom: 1px solid var(--ink);
+        padding: 6px 2px;
+        font-size: 14px;
+        outline: none;
+      }
+      button {
+        background: var(--purple);
+        color: #fff;
+        border: none;
+        padding: 8px 18px;
+        font-size: 12px;
+        cursor: pointer;
+        letter-spacing: 0.05em;
+      }
+
+      /* main grid */
+      .main-grid {
+        display: grid;
+        grid-template-columns: 1.7fr 1fr;
+        gap: 40px;
+        padding: 0 40px 60px;
+      }
+      .col-label {
+        font-size: 11px;
+        letter-spacing: 0.3em;
+        margin-bottom: 16px;
+      }
+      .post-card {
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        gap: 18px;
+        padding: 16px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .post-card img {
+        width: 140px;
+        height: 140px;
+        object-fit: cover;
+      }
+      .card-body h4 {
+        font-family: "Inter", sans-serif;
+        font-weight: 600;
+        font-size: 15px;
+        margin: 4px 0 6px;
+        line-height: 1.35;
+      }
+      .reactions {
+        margin-top: 10px;
+        font-size: 11px;
+        color: var(--muted);
+        display: flex;
+        gap: 14px;
+      }
+      .heart {
+        color: #e55;
+      }
+
+      /* sidebar */
+      .sidebar > div {
+        margin-bottom: 40px;
+      }
+      .avatar {
+        width: 100%;
+        aspect-ratio: 1/1;
+        object-fit: cover;
+        background: #d0e8e8;
+        margin-bottom: 14px;
+      }
+      .about-text {
+        font-size: 12px;
+        line-height: 1.6;
+        color: #444;
+      }
+      .read-more {
+        display: inline-block;
+        margin-top: 10px;
+        font-size: 12px;
+        border-bottom: 1px solid var(--ink);
+      }
+      .follow-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+      }
+      .follow-grid img {
+        aspect-ratio: 1/1;
+        object-fit: cover;
+      }
+      .socials.side {
+        position: static;
+        justify-content: center;
+        margin-top: 12px;
+      }
+      .sub-side input {
+        width: 100%;
+        border: 1px solid var(--line);
+        padding: 8px;
+        font-size: 12px;
+        margin-bottom: 10px;
+      }
+      .sub-side button {
+        width: 100%;
+      }
+
+      @media (max-width: 760px) {
+        .brand {
+          font-size: 40px;
+        }
+        .main-grid {
+          grid-template-columns: 1fr;
+        }
+        .subscribe-bar {
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+        .post-card {
+          grid-template-columns: 100px 1fr;
+        }
+        .post-card img {
+          width: 100px;
+          height: 100px;
+        }
+        .topnav ul {
+          gap: 18px;
+        }
+        .socials {
+          display: none;
+        }
+      }
+    </style>
+  </body>
+</html>

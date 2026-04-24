@@ -1,6 +1,6 @@
 ---
 title: "마크다운 사용법 (README.md)"
-summary: "네이버 블로그에서 가져온 글 (Sep 10 2022)."
+summary: "마크다운 문법이 정리돼있는 Gist 링크 북마크 메모."
 date: "Sep 10 2022"
 draft: false
 tags:

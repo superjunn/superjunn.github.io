@@ -1,6 +1,6 @@
 ---
 title: "블로그 시작"
-summary: "네이버 블로그에서 가져온 글 (Jun 28 2022)."
+summary: "공부는 언제든 save & load가 가능해야 한다. 코딩은 블로그에, 항공우주는 노터빌리티에 남기기로."
 date: "Jun 28 2022"
 draft: false
 tags:

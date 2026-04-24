@@ -1,8 +1,8 @@
 ---
-company: "KAIST GNC Lab (이지윤 교수님 연구실)"
-role: "석사과정"
+company: "KAIST GNC Lab (Prof. Jiyun Lee)"
+role: "M.S. Student"
 dateStart: "03/01/2025"
 dateEnd: "Present"
 ---
 
-항공우주공학과 GNC(Guidance, Navigation, Control) 연구실에서 석사과정 중. GNSS 신호처리를 주로 들여다보고 있다.
+M.S. student at the GNC (Guidance, Navigation, Control) Lab in the Department of Aerospace Engineering. Primarily working on GNSS signal processing.

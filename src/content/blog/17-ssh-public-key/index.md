@@ -1,6 +1,6 @@
 ---
 title: "ssh public 키 등록"
-summary: "네이버 블로그에서 가져온 글 (Sep 25 2022)."
+summary: "매번 비밀번호 치기 귀찮으니 키 쌍 생성해서 서버에 public 키 등록해두는 방법 (대충 메모)."
 date: "Sep 25 2022"
 draft: false
 tags:

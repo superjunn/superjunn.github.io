@@ -1,6 +1,6 @@
 ---
 title: "Git Unstage"
-summary: "네이버 블로그에서 가져온 글 (Sep 10 2022)."
+summary: "`git add` 잘못 때렸을 때 `git restore --staged .` 한 줄로 원상복구."
 date: "Sep 10 2022"
 draft: false
 tags:

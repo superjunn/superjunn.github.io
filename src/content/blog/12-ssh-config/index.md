@@ -1,6 +1,6 @@
 ---
 title: "ssh config 파일 만들어서 ssh 접속 편하게 하기"
-summary: "네이버 블로그에서 가져온 글 (Sep 03 2022)."
+summary: "~/.ssh/config에 Host 별칭 등록해두면 IP 복붙 없이 `ssh gcp` 한 줄로 접속 가능."
 date: "Sep 03 2022"
 draft: false
 tags:

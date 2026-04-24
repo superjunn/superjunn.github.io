@@ -1,6 +1,6 @@
 ---
 title: "WSL에서 ssh 서버 열고 외부접속하기"
-summary: "네이버 블로그에서 가져온 글 (Sep 25 2022)."
+summary: "GCP 막혔을 때 대안으로, 데스크탑 WSL에 SSH 서버 열고 공유기 포트포워딩해서 외부에서 접속하기."
 date: "Sep 25 2022"
 draft: false
 tags:
