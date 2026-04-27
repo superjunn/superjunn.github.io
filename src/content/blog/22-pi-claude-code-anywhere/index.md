@@ -12,7 +12,7 @@ tags:
 
 ## 집 공유기 옆 라즈베리파이
 
-우리 집 공유기 옆에는 [라즈베리파이](/projects/home-lab-setup) 한 대가 24시간 켜져 있다. 원래 [숙제 사이트](/projects/homework-site) 호스팅하려고 둔 거다. Django + SQLite + Nginx 정도는 파이로 넘치고도 남는다 — 굳이 전기 많이 먹는 서버컴 살 이유가 없었다.
+내 방 자취방 공유기 옆에는 [라즈베리파이](/projects/home-lab-setup) 한 대가 24시간 켜져 있다. 원래 [숙제 사이트](/projects/homework-site) 호스팅하려고 둔 거다. Django + SQLite + Nginx 정도는 파이로 넘치고도 남는다 — 굳이 전기 많이 먹는 서버컴 살 이유가 없었다.
 
 근데 이놈이 요즘 내 인생에서 가장 비중이 큰 컴퓨터가 됐다. 노트북도 데탑도 아니고 **이 손바닥만한 파이가**.
 
