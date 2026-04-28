@@ -37,7 +37,27 @@ const repoUrl = collection === "projects" ? data.repoUrl : null
       </svg>
       {readingTime(body)}
     </div>
+    <div class="flex items-center gap-2" data-views>
+      <svg class="size-5 stroke-current" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+      <span data-views-count>—</span>
+    </div>
   </div>
+  <script is:inline>
+    (async () => {
+      const el = document.querySelector('[data-views-count]')
+      if (!el) return
+      try {
+        const path = window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname + '/'
+        const r = await fetch(`https://bbscience.duckdns.org/api/blog-edit/views?path=${encodeURIComponent(path)}`)
+        if (!r.ok) { el.textContent = '—'; return }
+        const { views } = await r.json()
+        el.textContent = `${views} views`
+      } catch { el.textContent = '—' }
+    })()
+  </script>
   <h1 class="text-3xl font-semibold text-black dark:text-white mt-2">
     {title}
   </h1>
