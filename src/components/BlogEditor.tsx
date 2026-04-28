@@ -21,6 +21,60 @@ function joinFrontmatter(fm: string, body: string): string {
   return `---\n${fm}\n---\n\n${body.replace(/^\n+/, "")}`
 }
 
+type Meta = { title: string; summary: string; date: string; draft: boolean; tags: string[] }
+
+function unquote(s: string): string {
+  s = s.trim()
+  if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"))) {
+    return s.slice(1, -1).replace(/\\"/g, '"')
+  }
+  return s
+}
+
+function quote(s: string): string {
+  return `"${s.replace(/"/g, '\\"')}"`
+}
+
+function parseMeta(fm: string): Meta {
+  const meta: Meta = { title: "", summary: "", date: "", draft: false, tags: [] }
+  const lines = fm.split("\n")
+  let i = 0
+  while (i < lines.length) {
+    const line = lines[i]
+    const m = line.match(/^([A-Za-z_]+):\s*(.*)$/)
+    if (!m) { i++; continue }
+    const [, key, rawVal] = m
+    if (key === "tags") {
+      const tags: string[] = []
+      i++
+      while (i < lines.length && lines[i].match(/^\s*-\s+/)) {
+        tags.push(unquote(lines[i].replace(/^\s*-\s+/, "")))
+        i++
+      }
+      meta.tags = tags
+      continue
+    }
+    if (key === "title") meta.title = unquote(rawVal)
+    else if (key === "summary") meta.summary = unquote(rawVal)
+    else if (key === "date") meta.date = unquote(rawVal)
+    else if (key === "draft") meta.draft = rawVal.trim() === "true"
+    i++
+  }
+  return meta
+}
+
+function serializeMeta(meta: Meta): string {
+  const lines = [
+    `title: ${quote(meta.title)}`,
+    `summary: ${quote(meta.summary)}`,
+    `date: ${quote(meta.date)}`,
+    `draft: ${meta.draft ? "true" : "false"}`,
+    `tags:`,
+    ...meta.tags.map((t) => `- ${t}`),
+  ]
+  return lines.join("\n")
+}
+
 async function api(path: string, init: RequestInit = {}): Promise<Response> {
   const token = localStorage.getItem(TOKEN_KEY)
   const headers = new Headers(init.headers)
@@ -34,9 +88,10 @@ export default function BlogEditor(props: { slug: string }) {
   const [mode, setMode] = createSignal<Mode>("idle")
   const [pw, setPw] = createSignal("")
   const [err, setErr] = createSignal("")
+  const [meta, setMeta] = createSignal<Meta>({ title: "", summary: "", date: "", draft: false, tags: [] })
+  const [tagsInput, setTagsInput] = createSignal("")
   let editor: Editor | null = null
   let editorEl: HTMLDivElement | undefined
-  let frontmatter = ""
 
   const articleEl = () =>
     document.querySelector<HTMLElement>("article")
@@ -84,7 +139,9 @@ export default function BlogEditor(props: { slug: string }) {
     }
     const { content } = await r.json()
     const { fm, body } = splitFrontmatter(content)
-    frontmatter = fm
+    const m = parseMeta(fm)
+    setMeta(m)
+    setTagsInput(m.tags.join(", "))
     setMode("editing")
     queueMicrotask(() => mountEditor(body))
   }
@@ -111,7 +168,11 @@ export default function BlogEditor(props: { slug: string }) {
     if (!editor) return
     setMode("saving")
     const md = (editor.storage as any).markdown.getMarkdown() as string
-    const full = joinFrontmatter(frontmatter, md)
+    const updated: Meta = {
+      ...meta(),
+      tags: tagsInput().split(",").map((t) => t.trim()).filter(Boolean),
+    }
+    const full = joinFrontmatter(serializeMeta(updated), md)
     const r = await api(`/post/${props.slug}`, {
       method: "PUT",
       body: JSON.stringify({ content: full }),
@@ -219,6 +280,54 @@ export default function BlogEditor(props: { slug: string }) {
       </Show>
 
       <Show when={mode() === "editing" || mode() === "saving"}>
+        <div class="mb-6 grid gap-3 p-4 border rounded border-black/15 dark:border-white/20">
+          <label class="grid gap-1 text-sm">
+            <span class="opacity-70">제목</span>
+            <input
+              type="text"
+              value={meta().title}
+              onInput={(e) => setMeta({ ...meta(), title: e.currentTarget.value })}
+              class="px-3 py-1.5 border rounded bg-transparent border-black/30 dark:border-white/30"
+            />
+          </label>
+          <label class="grid gap-1 text-sm">
+            <span class="opacity-70">요약 (summary)</span>
+            <textarea
+              rows={2}
+              value={meta().summary}
+              onInput={(e) => setMeta({ ...meta(), summary: e.currentTarget.value })}
+              class="px-3 py-1.5 border rounded bg-transparent border-black/30 dark:border-white/30 resize-y"
+            />
+          </label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <label class="grid gap-1 text-sm">
+              <span class="opacity-70">날짜 (예: Apr 28 2026)</span>
+              <input
+                type="text"
+                value={meta().date}
+                onInput={(e) => setMeta({ ...meta(), date: e.currentTarget.value })}
+                class="px-3 py-1.5 border rounded bg-transparent border-black/30 dark:border-white/30"
+              />
+            </label>
+            <label class="grid gap-1 text-sm">
+              <span class="opacity-70">태그 (콤마로 구분)</span>
+              <input
+                type="text"
+                value={tagsInput()}
+                onInput={(e) => setTagsInput(e.currentTarget.value)}
+                class="px-3 py-1.5 border rounded bg-transparent border-black/30 dark:border-white/30"
+              />
+            </label>
+          </div>
+          <label class="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={meta().draft}
+              onChange={(e) => setMeta({ ...meta(), draft: e.currentTarget.checked })}
+            />
+            <span>draft (공개 안 함)</span>
+          </label>
+        </div>
         <article>
           <div ref={editorEl} onPaste={onPaste} onDrop={onDrop} class="min-h-[400px] focus-within:outline-none" />
         </article>
