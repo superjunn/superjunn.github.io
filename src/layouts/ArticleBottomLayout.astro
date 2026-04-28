@@ -26,9 +26,9 @@ const editUrl = `https://github.com/superjunn/superjunn.github.io/edit/main/src/
   <article>
     <Content/>
   </article>
-  {collection === "blog" && (
+  {(collection === "blog" || collection === "projects") && (
     <div class="my-6">
-      <BlogEditor slug={entry.slug} client:only="solid-js" />
+      <BlogEditor slug={entry.slug} collection={collection} client:only="solid-js" />
     </div>
   )}
   <div class="my-6 flex justify-end">

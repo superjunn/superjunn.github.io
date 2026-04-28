@@ -3,6 +3,7 @@ import { Editor } from "@tiptap/core"
 import StarterKit from "@tiptap/starter-kit"
 import Image from "@tiptap/extension-image"
 import Link from "@tiptap/extension-link"
+import BubbleMenu from "@tiptap/extension-bubble-menu"
 import { Markdown } from "tiptap-markdown"
 
 const API = "https://bbscience.duckdns.org/api/blog-edit"
@@ -84,14 +85,28 @@ async function api(path: string, init: RequestInit = {}): Promise<Response> {
   return fetch(`${API}${path}`, { ...init, headers })
 }
 
-export default function BlogEditor(props: { slug: string }) {
+type RewriteState = {
+  visible: boolean
+  loading: boolean
+  from: number
+  to: number
+  original: string
+  rewritten: string
+  error: string
+}
+
+export default function BlogEditor(props: { slug: string; collection: string }) {
   const [mode, setMode] = createSignal<Mode>("idle")
   const [pw, setPw] = createSignal("")
   const [err, setErr] = createSignal("")
   const [meta, setMeta] = createSignal<Meta>({ title: "", summary: "", date: "", draft: false, tags: [] })
   const [tagsInput, setTagsInput] = createSignal("")
+  const [rewrite, setRewrite] = createSignal<RewriteState>({
+    visible: false, loading: false, from: 0, to: 0, original: "", rewritten: "", error: "",
+  })
   let editor: Editor | null = null
   let editorEl: HTMLDivElement | undefined
+  let bubbleEl: HTMLDivElement | undefined
 
   const articleEl = () =>
     document.querySelector<HTMLElement>("article")
@@ -125,7 +140,7 @@ export default function BlogEditor(props: { slug: string }) {
 
   async function loadAndOpen() {
     setMode("loading")
-    const r = await api(`/post/${props.slug}`)
+    const r = await api(`/post/${props.collection}/${props.slug}`)
     if (r.status === 401) {
       localStorage.removeItem(TOKEN_KEY)
       setMode("auth")
@@ -157,6 +172,7 @@ export default function BlogEditor(props: { slug: string }) {
         Image.configure({ inline: false }),
         Link.configure({ openOnClick: false }),
         Markdown.configure({ html: false, breaks: false, transformPastedText: true }),
+        ...(bubbleEl ? [BubbleMenu.configure({ element: bubbleEl, options: { placement: "top" } })] : []),
       ],
       content: body,
       autofocus: "end",
@@ -173,7 +189,7 @@ export default function BlogEditor(props: { slug: string }) {
       tags: tagsInput().split(",").map((t) => t.trim()).filter(Boolean),
     }
     const full = joinFrontmatter(serializeMeta(updated), md)
-    const r = await api(`/post/${props.slug}`, {
+    const r = await api(`/post/${props.collection}/${props.slug}`, {
       method: "PUT",
       body: JSON.stringify({ content: full }),
     })
@@ -197,7 +213,7 @@ export default function BlogEditor(props: { slug: string }) {
   async function uploadImage(file: File): Promise<string | null> {
     const fd = new FormData()
     fd.append("file", file)
-    const r = await api(`/post/${props.slug}/image`, { method: "POST", body: fd })
+    const r = await api(`/post/${props.collection}/${props.slug}/image`, { method: "POST", body: fd })
     if (!r.ok) return null
     const { filename } = await r.json()
     return `./${filename}`
@@ -221,6 +237,47 @@ export default function BlogEditor(props: { slug: string }) {
     uploadImage(file).then((src) => {
       if (src && editor) editor.chain().focus().setImage({ src }).run()
     })
+  }
+
+  async function requestRewrite() {
+    if (!editor) return
+    const { from, to } = editor.state.selection
+    const text = editor.state.doc.textBetween(from, to, "\n", "\n").trim()
+    if (!text) return
+    const fullMd = (editor.storage as any).markdown.getMarkdown() as string
+    setRewrite({ visible: true, loading: true, from, to, original: text, rewritten: "", error: "" })
+    try {
+      const r = await api(`/rewrite`, {
+        method: "POST",
+        body: JSON.stringify({
+          collection: props.collection,
+          slug: props.slug,
+          selection: text,
+          context: fullMd,
+        }),
+      })
+      if (!r.ok) {
+        const msg = r.status === 504 ? "응답 지연 (다시 시도)" : `요청 실패 (${r.status})`
+        setRewrite((s) => ({ ...s, loading: false, error: msg }))
+        return
+      }
+      const { rewritten } = await r.json()
+      setRewrite((s) => ({ ...s, loading: false, rewritten, error: "" }))
+    } catch {
+      setRewrite((s) => ({ ...s, loading: false, error: "네트워크 오류" }))
+    }
+  }
+
+  function acceptRewrite() {
+    if (!editor) return
+    const s = rewrite()
+    if (!s.rewritten) return
+    editor.chain().focus().insertContentAt({ from: s.from, to: s.to }, s.rewritten).run()
+    setRewrite({ visible: false, loading: false, from: 0, to: 0, original: "", rewritten: "", error: "" })
+  }
+
+  function cancelRewrite() {
+    setRewrite({ visible: false, loading: false, from: 0, to: 0, original: "", rewritten: "", error: "" })
   }
 
   function cancel() {
@@ -331,6 +388,20 @@ export default function BlogEditor(props: { slug: string }) {
         <article>
           <div ref={editorEl} onPaste={onPaste} onDrop={onDrop} class="min-h-[400px] focus-within:outline-none" />
         </article>
+        <div ref={bubbleEl} class="bg-white dark:bg-black border border-black/30 dark:border-white/30 rounded shadow-lg flex">
+          <button
+            onMouseDown={(e) => { e.preventDefault(); requestRewrite() }}
+            class="px-3 py-1.5 text-xs hover:bg-black/5 hover:dark:bg-white/10 flex items-center gap-1.5"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+              <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+              <path d="M2 2l7.586 7.586"/>
+              <circle cx="11" cy="11" r="2"/>
+            </svg>
+            톤 다시 쓰기
+          </button>
+        </div>
         <div class="my-4 flex items-center gap-3">
           <button
             onClick={save}
@@ -343,6 +414,57 @@ export default function BlogEditor(props: { slug: string }) {
           <Show when={err()}>
             <span class="text-sm text-red-500">{err()}</span>
           </Show>
+        </div>
+      </Show>
+
+      <Show when={rewrite().visible}>
+        <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={cancelRewrite}>
+          <div
+            class="bg-white dark:bg-neutral-900 text-black dark:text-white rounded-lg shadow-xl max-w-2xl w-full p-5 grid gap-3"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div class="text-sm font-semibold opacity-70">톤 다시 쓰기</div>
+            <div class="grid gap-2">
+              <div class="text-xs opacity-60">원문</div>
+              <div class="p-3 border rounded bg-black/5 dark:bg-white/5 text-sm whitespace-pre-wrap">{rewrite().original}</div>
+            </div>
+            <div class="grid gap-2">
+              <div class="text-xs opacity-60">새 버전</div>
+              <Show when={rewrite().loading}>
+                <div class="p-3 border rounded text-sm opacity-70">생성 중… (5~30초)</div>
+              </Show>
+              <Show when={!rewrite().loading && rewrite().rewritten}>
+                <div class="p-3 border rounded bg-green-500/5 border-green-500/30 text-sm whitespace-pre-wrap">
+                  {rewrite().rewritten}
+                </div>
+              </Show>
+              <Show when={rewrite().error}>
+                <div class="text-sm text-red-500">{rewrite().error}</div>
+              </Show>
+            </div>
+            <div class="flex items-center justify-end gap-2 pt-2">
+              <button
+                onClick={cancelRewrite}
+                class="px-3 py-1.5 text-sm opacity-70 hover:opacity-100"
+              >
+                취소
+              </button>
+              <button
+                onClick={requestRewrite}
+                disabled={rewrite().loading}
+                class="px-3 py-1.5 text-sm border rounded border-black/30 dark:border-white/30 hover:bg-black/5 hover:dark:bg-white/10 disabled:opacity-40"
+              >
+                다시
+              </button>
+              <button
+                onClick={acceptRewrite}
+                disabled={rewrite().loading || !rewrite().rewritten}
+                class="px-4 py-1.5 text-sm border rounded bg-green-600 text-white border-green-600 hover:bg-green-700 disabled:opacity-40"
+              >
+                채택
+              </button>
+            </div>
+          </div>
         </div>
       </Show>
     </div>
