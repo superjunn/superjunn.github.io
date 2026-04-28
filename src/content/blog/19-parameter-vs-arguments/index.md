@@ -2,7 +2,7 @@
 title: "맨날 헷갈리는 Parameter vs Arguments 차이"
 summary: "Parameter는 함수를 '정의'할 때 쓰는 매개변수, Argument는 함수를 '호출'할 때 넘기는 전달인자. 끝."
 date: "Oct 07 2022"
-draft: false
+draft: true
 tags:
 - CS
 ---
