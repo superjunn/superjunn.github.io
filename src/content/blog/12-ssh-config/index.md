@@ -33,8 +33,8 @@ vim 이든 code 든 nano든 뭐든 알아서..
 
 ```
 Host gcp
-HostName 43.192.168.25
-User pullybook
+HostName <server-ip>
+User <user>
 IdentityFile ~/.ssh/id_rsa
 ```
 

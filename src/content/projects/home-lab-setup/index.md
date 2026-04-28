@@ -14,15 +14,15 @@ tags:
 ```
                     Internet
                        │
-                 [ 공유기(GW) ]    포트포워딩: 80, 443, 2222→22
+                 [ 공유기(GW) ]    포트포워딩: 80, 443, <ssh-port>→22
                        │           (그 외 포트는 전부 차단)
          ┌─────────────┼─────────────┐
          │             │             │
    [ Raspberry Pi 5 ]  │       [ Desktop (Windows) ]
-    192.168.0.12       │         192.168.0.10
+   192.168.X.<pi>      │       192.168.X.<desktop>
     24/7 상시 가동       │         필요할 때만 WOL로 부팅
          │             │
-         └──── 내부 LAN (192.168.0.0/24) ────┘
+         └──── 내부 LAN (192.168.X.0/24) ────┘
 
          [ MacBook ]  — 노마드, 자취방/연구실/외부 이동
 ```
@@ -34,8 +34,8 @@ tags:
 ## 라즈베리파이 5 — 집의 허브
 
 - **Debian Trixie (aarch64)**
-- hostname: `BBscience-site-pi`, 내부 IP `192.168.0.12`
-- 외부 접속: `ssh -p 2222 superjunn@bbscience.duckdns.org`
+- 내부 IP는 라우터에서 정적 할당
+- 외부 접속: `ssh -p <ssh-port> <user>@<myhost>.duckdns.org`
 
 ### 올라가 있는 서비스 (systemd)
 - `nginx` — 리버스 프록시 + HTTPS 종단 (Let's Encrypt)
@@ -46,16 +46,16 @@ tags:
 - crontab — DuckDNS 갱신(5분), FC Online 자동화 트리거(07:30) 등
 
 ### DNS & 인증서
-- **DuckDNS**로 `bbscience.duckdns.org` 운영. 공유기 공인 IP 바뀌면 `~/duckdns/duck.sh`가 5분마다 갱신
+- **DuckDNS**로 개인 도메인 운영. 공유기 공인 IP 바뀌면 `~/duckdns/duck.sh`가 5분마다 갱신
 - **Let's Encrypt**로 HTTPS. `certbot`이 자동 갱신
-- **dnsmasq**로 내부 헤어핀 NAT 우회 → 내부에서도 `bbscience.duckdns.org` 가 바로 내부 IP로 해석됨
+- **dnsmasq**로 내부 헤어핀 NAT 우회 → 내부에서도 외부 도메인이 바로 내부 IP로 해석됨
 
 ## 데스크탑 — 필요할 때만 켜는 워크호스
 
-- Windows, 내부 IP `192.168.0.10`, 계정 `PullyCom`
+- Windows, 내부 IP는 라우터에서 정적 할당, 별도 윈도우 계정
 - 공유기에서 외부 포트 노출 **안 함**. 모든 접근은 파이를 경유
   ```
-  ssh -J superjunn@bbscience.duckdns.org:2222 PullyCom@192.168.0.10
+  ssh -J <user>@<myhost>.duckdns.org:<ssh-port> <win-user>@<desktop-internal-ip>
   ```
 - **Wake-on-LAN**: 파이에서 `wakeonlan <MAC>` 한 방으로 부팅. 텔레그램 봇의 `/wol` 커맨드가 이걸 감쌈
 - 주 용도
@@ -67,13 +67,13 @@ tags:
 
 | 위치 | 경로 |
 | --- | --- |
-| 자취방 내부망 | `ssh superjunn@192.168.0.12` → (원하면) 데탑 ssh |
-| 외부 (LTE/다른 와이파이) | `ssh -p 2222 superjunn@bbscience.duckdns.org` |
-| 맥북으로 외부에서 접속 | 필요하면 원격 로그인 켜두고 파이 점프: `ssh -J superjunn@bbscience.duckdns.org:2222 pullybook@<맥북IP>` |
+| 자취방 내부망 | `ssh <user>@<pi-internal-ip>` → (원하면) 데탑 ssh |
+| 외부 (LTE/다른 와이파이) | `ssh -p <ssh-port> <user>@<myhost>.duckdns.org` |
+| 맥북으로 외부에서 접속 | 필요하면 원격 로그인 켜두고 파이 점프: `ssh -J <user>@<myhost>.duckdns.org:<ssh-port> <mac-user>@<맥북IP>` |
 
 ## 왜 이렇게 구성했나
 
-- **공격면 최소화**: 공유기에 뚫린 포트는 3개(80/443/2222). 그 외엔 전부 내부망 전용
+- **공격면 최소화**: 공유기에 뚫린 포트는 3개(80/443/ssh). 그 외엔 전부 내부망 전용. SSH는 비표준 포트로 옮겨서 자동 봇 트래픽 줄임
 - **전기료**: 라즈베리파이 5W × 24h × 30d ≈ 3.6kWh/월. 데탑은 평소 꺼둬서 유의미한 누수 없음
 - **단일 진입점**: 모든 외부 접속이 파이 한 곳으로 들어오니, 로그 모니터링·fail2ban 같은 방어 장치를 한 번만 세팅하면 됨
 - **봇 덕분에 커맨드라인 생략**: 폰에서 텔레그램으로 `/wol`, `/screenshot`, `/sleep` 한 줄이면 됨

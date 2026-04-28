@@ -38,7 +38,7 @@ tags:
 - Flask + Plotly로 대시보드 (거시경제 카드 + 외국인/기관 순매수 TOP 10)
 - 종목 페이지: 인터랙티브 차트 + 앙상블 점수 + 시그널 + 증권사 목표가
 - Nginx + Let's Encrypt, 다크 테마
-- 라즈베리파이에 `stock-advisor-web` systemd로 올림 → **https://pullystock.duckdns.org**
+- 라즈베리파이에 `stock-advisor-web` systemd로 올림 (별도 DDNS 서브도메인 + Let's Encrypt)
 - `/investor`, `/fundamental`, `/technical`, `/macro`, `/score` API 엔드포인트
 
 ## 문득 — 이걸 사업으로 미는 곳이 이미 있을 것 같았다
