@@ -35,13 +35,14 @@ tags:
 ## 웹 플랫폼도 올렸다
 
 봇 혼자서는 공유하기 애매하니 **웹으로 래핑**:
+
 - Flask + Plotly로 대시보드 (거시경제 카드 + 외국인/기관 순매수 TOP 10)
 - 종목 페이지: 인터랙티브 차트 + 앙상블 점수 + 시그널 + 증권사 목표가
 - Nginx + Let's Encrypt, 다크 테마
 - 라즈베리파이에 `stock-advisor-web` systemd로 올림 (별도 DDNS 서브도메인 + Let's Encrypt)
 - `/investor`, `/fundamental`, `/technical`, `/macro`, `/score` API 엔드포인트
 
-## 문득 — 이걸 사업으로 미는 곳이 이미 있을 것 같았다
+## 이미 사업으로 미는 곳이 있을 것 같다는 직감
 
 웹까지 올리고 대시보드가 어느 정도 모양 나니까, 이렇게 딸깍으로 만든 걸 누군가 이미 사업 아이템으로 밀고 있을 것 같다는 생각이 들어서 검색해봤다.
 
@@ -54,7 +55,7 @@ tags:
 이 프로젝트에서 포기한 건 아니다. 오히려 **가장 값진 경험**이 됐다:
 
 - **엔드투엔드 파이프라인 경험**: 데이터 수집(스크래핑·API) → 피처 엔지니어링 → 학습 → 백테스트 → 서빙(봇·웹) → 배포(파이 + systemd + HTTPS). 한 사람이 한 사이클 다 돌려본 건 처음
-- **`claude -p`로 자연어 레이어 만들기**: 데이터 컨텍스트를 프롬프트에 잘 주입하면 봇이 그럴듯한 애널리스트처럼 답함. API 추가 비용 없이
+- `claude -p`**로 자연어 레이어 만들기**: 데이터 컨텍스트를 프롬프트에 잘 주입하면 봇이 그럴듯한 애널리스트처럼 답함. API 추가 비용 없이
 - **"시장에 이미 있다"의 빠른 확인이 중요하다**: 더 깊이 파기 전에 검색 한 번으로 내 몇 주짜리 플랜이 절약됨
 - **개인 프로젝트로는 만들 수 있다. 서비스로는 자본·규제·신뢰가 다른 게임이다**
 
@@ -67,12 +68,6 @@ tags:
 
 ## 스택 요약
 
-| 레이어 | 기술 |
-| --- | --- |
-| 데이터 | 네이버 금융, WiseReport, pykrx, 한국은행 ECOS API |
-| ML | XGBoost 앙상블 + DQN(실험) |
-| 봇 | python-telegram-bot + `claude -p` 자연어 레이어 |
-| 웹 | Flask + Plotly (인터랙티브 차트) |
-| 인프라 | Raspberry Pi 5 + Nginx + systemd + Let's Encrypt |
+레이어기술데이터네이버 금융, WiseReport, pykrx, 한국은행 ECOS APIMLXGBoost 앙상블 + DQN(실험)봇python-telegram-bot + `claude -p` 자연어 레이어웹Flask + Plotly (인터랙티브 차트)인프라Raspberry Pi 5 + Nginx + systemd + Let's Encrypt
 
 관련: [Home Lab 구성](/projects/home-lab-setup) · [Telegram Claude Bot](/projects/telegram-claude-bot)
