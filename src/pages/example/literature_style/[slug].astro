@@ -1,0 +1,397 @@
+---
+import { literaturePosts } from "../../../data/literature_posts"
+
+export function getStaticPaths() {
+  return literaturePosts.map((p) => ({
+    params: { slug: p.slug },
+    props: { post: p },
+  }))
+}
+
+const { post } = Astro.props
+const idx = literaturePosts.findIndex((p) => p.slug === post.slug)
+const prev = literaturePosts[(idx - 1 + literaturePosts.length) % literaturePosts.length]
+const next = literaturePosts[(idx + 1) % literaturePosts.length]
+
+function renderInline(s: string): string {
+  return s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+}
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{post.title} — The Book Lover</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Lora:wght@400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="logo">
+        <a href="/example/literature_style" class="logo-link">
+          <span class="icon">📖</span>
+          <span class="wordmark">T.B.L</span>
+        </a>
+      </div>
+      <nav>
+        <a href="/example/literature_style">Home</a>
+        <a href="#">About</a>
+        <a href="#">Subscribe</a>
+        <span class="sns">f</span>
+        <span class="sns">t</span>
+      </nav>
+    </header>
+
+    <article class="post">
+      <div class="cover" style={`background-image: url('${post.image}');`}></div>
+
+      <div class="post-inner">
+        <a href="/example/literature_style" class="back">← All Posts</a>
+
+        <header class="post-head">
+          <p class="kicker">Essay</p>
+          <h1>{post.title}</h1>
+          <p class="lead">{post.excerpt}</p>
+          <div class="byline">
+            <span class="avatar"></span>
+            <span class="who">The Book Lover</span>
+            <span class="dot">·</span>
+            <span class="when">{post.date}</span>
+            <span class="dot">·</span>
+            <span class="when">{post.readTime} read</span>
+          </div>
+        </header>
+
+        <section class="body">
+          {post.body.map((p) => (
+            <p set:html={renderInline(p)} />
+          ))}
+        </section>
+
+        <hr class="rule" />
+
+        <div class="reactions-row">
+          <span>{post.views} views</span>
+          <span>{post.comments} comments</span>
+          <span class="heart">♡ {post.likes}</span>
+        </div>
+
+        <nav class="post-nav">
+          <a href={`/example/literature_style/${prev.slug}`} class="nav-card">
+            <p class="nav-label">← Previous</p>
+            <h4>{prev.title}</h4>
+          </a>
+          <a href={`/example/literature_style/${next.slug}`} class="nav-card right">
+            <p class="nav-label">Next →</p>
+            <h4>{next.title}</h4>
+          </a>
+        </nav>
+      </div>
+    </article>
+
+    <footer class="footer">
+      <div class="foot-inner">
+        <h4>Subscribe here to get my latest posts</h4>
+        <form>
+          <label>Enter your email here *</label>
+          <div class="row">
+            <input type="email" />
+            <button type="button">Join</button>
+          </div>
+        </form>
+        <p class="copy">
+          © 2025 by The Book Lover. Proudly created as a design experiment.
+        </p>
+      </div>
+    </footer>
+
+    <style is:global>
+      :root {
+        --cream: #efece6;
+        --paper: #ffffff;
+        --ink: #1a1a1a;
+        --muted: #8a8a8a;
+        --line: #eadfd4;
+        --gold: #a88b4a;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--cream);
+        color: var(--ink);
+        font-family: "Lora", "Playfair Display", Georgia, serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .topbar {
+        background: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 18px 40px;
+        position: relative;
+        z-index: 3;
+      }
+      .logo-link {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .logo .icon {
+        color: var(--gold);
+        font-size: 18px;
+      }
+      .logo .wordmark {
+        font-family: "Cormorant Garamond", serif;
+        font-weight: 600;
+        font-size: 20px;
+        letter-spacing: 0.1em;
+      }
+      .topbar nav {
+        display: flex;
+        gap: 28px;
+        align-items: center;
+        font-size: 13px;
+      }
+      .topbar .sns {
+        font-size: 12px;
+        color: var(--ink);
+      }
+
+      .post .cover {
+        height: 460px;
+        background-size: cover;
+        background-position: center;
+        filter: brightness(0.9);
+      }
+
+      .post-inner {
+        max-width: 720px;
+        margin: -120px auto 0;
+        background: var(--paper);
+        padding: 56px 64px 64px;
+        position: relative;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      }
+
+      .back {
+        display: inline-block;
+        font-size: 12px;
+        color: var(--muted);
+        letter-spacing: 0.1em;
+        margin-bottom: 24px;
+      }
+      .back:hover {
+        color: var(--ink);
+      }
+
+      .post-head .kicker {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 12px;
+        letter-spacing: 0.35em;
+        color: var(--gold);
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+      .post-head h1 {
+        font-family: "Playfair Display", serif;
+        font-weight: 500;
+        font-size: 38px;
+        line-height: 1.2;
+        margin-bottom: 18px;
+      }
+      .post-head .lead {
+        font-family: "Lora", serif;
+        font-size: 17px;
+        line-height: 1.6;
+        color: #444;
+        font-style: italic;
+        margin-bottom: 26px;
+      }
+      .byline {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 36px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid var(--line);
+      }
+      .byline .avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #e6e0d6;
+      }
+      .byline .who {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 13px;
+        color: var(--ink);
+        letter-spacing: 0.05em;
+      }
+      .byline .dot {
+        opacity: 0.5;
+      }
+
+      .body p {
+        font-family: "Lora", serif;
+        font-size: 17px;
+        line-height: 1.85;
+        color: #2a2a2a;
+        margin-bottom: 22px;
+      }
+      .body p strong {
+        font-weight: 600;
+        color: #1a1a1a;
+      }
+
+      .rule {
+        border: none;
+        border-top: 1px solid var(--line);
+        margin: 36px 0 18px;
+      }
+
+      .reactions-row {
+        display: flex;
+        gap: 18px;
+        font-size: 12px;
+        color: var(--muted);
+        padding-bottom: 36px;
+      }
+      .reactions-row .heart {
+        color: #d14a4a;
+      }
+
+      .post-nav {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        padding-top: 24px;
+        border-top: 1px solid var(--line);
+      }
+      .nav-card {
+        padding: 18px 20px;
+        background: #f7f4ed;
+        transition: background 200ms ease;
+      }
+      .nav-card:hover {
+        background: #f0eadd;
+      }
+      .nav-card.right {
+        text-align: right;
+      }
+      .nav-label {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 11px;
+        letter-spacing: 0.25em;
+        color: var(--gold);
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+      .nav-card h4 {
+        font-family: "Playfair Display", serif;
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 1.35;
+        color: var(--ink);
+      }
+
+      .footer {
+        background: #111;
+        color: #fff;
+        padding: 36px 24px;
+        margin-top: 80px;
+      }
+      .foot-inner {
+        max-width: 860px;
+        margin: 0 auto;
+      }
+      .foot-inner h4 {
+        font-family: "Playfair Display", serif;
+        font-weight: 500;
+        font-size: 18px;
+        margin-bottom: 18px;
+      }
+      .foot-inner label {
+        display: block;
+        font-size: 11px;
+        color: #bbb;
+        margin-bottom: 6px;
+      }
+      .foot-inner .row {
+        display: flex;
+        gap: 12px;
+      }
+      .foot-inner input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid #666;
+        color: #fff;
+        padding: 8px 2px;
+        outline: none;
+        font-family: inherit;
+        font-size: 14px;
+      }
+      .foot-inner button {
+        background: transparent;
+        border: 1px solid #fff;
+        color: #fff;
+        padding: 8px 28px;
+        cursor: pointer;
+        letter-spacing: 0.1em;
+        font-family: inherit;
+      }
+      .copy {
+        margin-top: 26px;
+        font-size: 11px;
+        color: #888;
+        text-align: center;
+      }
+
+      @media (max-width: 720px) {
+        .post .cover {
+          height: 260px;
+        }
+        .post-inner {
+          margin-top: -60px;
+          padding: 32px 24px 40px;
+        }
+        .post-head h1 {
+          font-size: 28px;
+        }
+        .post-head .lead {
+          font-size: 15px;
+        }
+        .body p {
+          font-size: 16px;
+          line-height: 1.75;
+        }
+        .post-nav {
+          grid-template-columns: 1fr;
+        }
+        .nav-card.right {
+          text-align: left;
+        }
+        .topbar {
+          padding: 14px 18px;
+        }
+        .topbar nav {
+          gap: 16px;
+        }
+      }
+    </style>
+  </body>
+</html>
