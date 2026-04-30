@@ -3,10 +3,7 @@ title: "Code Runner Extension에서 C/C++ 헤더 파일 사용하기 (Mac)"
 summary: "VS Code의 Code Runner가 헤더 파일 컴파일을 못 해서 나는 에러를, .zshrc에 cppcompile 함수 넣고 settings.json 연결해서 해결."
 date: "Sep 03 2022"
 draft: false
-tags:
-- C++
-- Dev Env
-- VSCode
+category: "devenv"
 ---
 
 VS code에서 간단하게 Code Runner Extension을 이용해서 컴파일 하다보면 몇 가지 문제가 생긴다.

@@ -3,9 +3,7 @@ title: "인공지능과 로보틱스, 기술의 '실존'에 관하여"
 summary: "기술은 '실존'해야 혁명이 된다. chatGPT가 증명한 것과, 그 다음 단계로서의 로보틱스."
 date: "Feb 16 2023"
 draft: false
-tags:
-- AI
-- Essay
+category: "Essay"
 ---
 
 ## 기술은 '실존'해야 혁명이 된다

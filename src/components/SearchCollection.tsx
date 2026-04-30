@@ -7,11 +7,11 @@ import SearchBar from "@components/SearchBar"
 
 type Props = {
   entry_name: string
-  tags: string[]
+  categories: string[]
   data: CollectionEntry<"blog">[] | CollectionEntry<'projects'>[]
 }
 
-export default function SearchCollection({ entry_name, data, tags }: Props) {
+export default function SearchCollection({ entry_name, data, categories }: Props) {
   const coerced = data.map((entry) => entry as CollectionEntry<'blog'>);
 
   const [query, setQuery] = createSignal("");
@@ -20,7 +20,7 @@ export default function SearchCollection({ entry_name, data, tags }: Props) {
   const [descending, setDescending] = createSignal(false);
 
   const fuse = new Fuse(coerced, {
-    keys: ["slug", "data.title", "data.summary", "data.tags"],
+    keys: ["slug", "data.title", "data.summary", "data.category"],
     includeMatches: true,
     minMatchCharLength: 2,
     threshold: 0.4,
@@ -30,13 +30,13 @@ export default function SearchCollection({ entry_name, data, tags }: Props) {
     const filtered = (query().length < 2
       ? coerced
       : fuse.search(query()).map((result) => result.item)
-    ).filter((entry) =>
-      Array.from(filter()).every((value) =>
-        entry.data.tags.some((tag: string) =>
-          tag.toLowerCase() === String(value).toLowerCase()
-        )
+    ).filter((entry) => {
+      const sel = filter()
+      if (sel.size === 0) return true
+      return [...sel].some((v) =>
+        entry.data.category.toLowerCase() === String(v).toLowerCase()
       )
-    );
+    });
     setCollection(descending() ? filtered.toReversed() : filtered)
   })
 
@@ -44,11 +44,11 @@ export default function SearchCollection({ entry_name, data, tags }: Props) {
     setDescending(!descending())
   }
 
-  function toggleTag(tag: string) {
+  function toggleCategory(cat: string) {
     setFilter((prev) =>
-      new Set(prev.has(tag)
-        ? [...prev].filter((t) => t !== tag)
-        : [...prev, tag]
+      new Set(prev.has(cat)
+        ? [...prev].filter((t) => t !== cat)
+        : [...prev, cat]
       )
     )
   }
@@ -76,8 +76,8 @@ export default function SearchCollection({ entry_name, data, tags }: Props) {
         <div class="sticky top-24 mt-7">
           {/* Search Bar */}
           <SearchBar onSearchInput={onSearchInput} query={query} setQuery={setQuery} placeholderText={`Search ${entry_name}`} />
-          {/* Tag Filters */}
-          <div class="relative flex flex-row justify-between w-full"><p class="text-sm font-semibold uppercase my-4 text-black dark:text-white">Tags</p>
+          {/* Category Filters */}
+          <div class="relative flex flex-row justify-between w-full"><p class="text-sm font-semibold uppercase my-4 text-black dark:text-white">Category</p>
             {filter().size > 0 && (
               <button
                 onClick={clearFilters}
@@ -89,39 +89,39 @@ export default function SearchCollection({ entry_name, data, tags }: Props) {
               </button>
             )}</div>
           <ul class="flex flex-wrap sm:flex-col gap-1.5">
-            <For each={tags}>
-              {(tag) => (
+            <For each={categories}>
+              {(cat) => (
                 <li class="sm:w-full">
                   <button
-                    onClick={() => toggleTag(tag)}
+                    onClick={() => toggleCategory(cat)}
                     class={cn(
                       "w-full px-2 py-1 rounded",
                       "flex gap-2 items-center",
                       "bg-black/5 dark:bg-white/10",
                       "hover:bg-black/10 hover:dark:bg-white/15",
                       "transition-colors duration-300 ease-in-out",
-                      filter().has(tag) && "text-black dark:text-white"
+                      filter().has(cat) && "text-black dark:text-white"
                     )}
                   >
                     <svg
                       class={cn(
                         "shrink-0 size-5 fill-black/50 dark:fill-white/50",
                         "transition-colors duration-300 ease-in-out",
-                        filter().has(tag) && "fill-black dark:fill-white"
+                        filter().has(cat) && "fill-black dark:fill-white"
                       )}
                     >
                       <use
                         href={`/ui.svg#square`}
-                        class={cn(!filter().has(tag) ? "block" : "hidden")}
+                        class={cn(!filter().has(cat) ? "block" : "hidden")}
                       />
                       <use
                         href={`/ui.svg#square-check`}
-                        class={cn(filter().has(tag) ? "block" : "hidden")}
+                        class={cn(filter().has(cat) ? "block" : "hidden")}
                       />
                     </svg>
 
                     <span class="truncate block min-w-0 pt-[2px]">
-                      {tag}
+                      {cat}
                     </span>
                   </button>
 

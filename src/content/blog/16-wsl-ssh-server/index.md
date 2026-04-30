@@ -3,9 +3,7 @@ title: "WSL에서 ssh 서버 열고 외부접속하기"
 summary: "GCP 막혔을 때 대안으로, 데스크탑 WSL에 SSH 서버 열고 공유기 포트포워딩해서 외부에서 접속하기."
 date: "Sep 25 2022"
 draft: false
-tags:
-- SSH
-- WSL
+category: "devenv"
 ---
 
 평소 리눅스를 사용해야 할 경우에는 맥북 터미널에서 ssh로 구글에서 제공해주는 리눅스 서버에(GCP) 접속했었다. 그러나 어떤 이유로 인해 gcp를 사용하지 못하고 있어서 ㅜㅜ, 데스크탑에 깔아둔 wsl에 ssh로 접속하기로 마음 먹었다.

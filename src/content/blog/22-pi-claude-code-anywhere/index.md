@@ -3,11 +3,7 @@ title: "15만원 라즈베리파이로 100만원 맥미니 대체하기"
 summary: "맥미니 붐은 통합 메모리로 큰 로컬 모델을 굴릴 수 있다는 전제 위에 있었다. 근데 정작 그 위에 올릴 로컬 모델이 아직 Claude Sonnet/Opus 근처도 못 간다. 그럴 거면 15만원 라즈베리파이 + Claude Max 구독이 훨씬 가성비다."
 date: "Apr 27 2026"
 draft: false
-tags:
-- AI
-- Claude Code
-- Raspberry Pi
-- Essay
+category: "Essay"
 ---
 
 ## 자취방 공유기 옆 라즈베리파이

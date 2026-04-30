@@ -22,7 +22,8 @@ function joinFrontmatter(fm: string, body: string): string {
   return `---\n${fm}\n---\n\n${body.replace(/^\n+/, "")}`
 }
 
-type Meta = { title: string; summary: string; date: string; draft: boolean; tags: string[] }
+type Meta = { title: string; summary: string; date: string; draft: boolean; category: string }
+const CATEGORIES = ["devenv", "Essay", "Engineering", "Geopolitics/Social/History"]
 
 function unquote(s: string): string {
   s = s.trim()
@@ -37,7 +38,7 @@ function quote(s: string): string {
 }
 
 function parseMeta(fm: string): Meta {
-  const meta: Meta = { title: "", summary: "", date: "", draft: false, tags: [] }
+  const meta: Meta = { title: "", summary: "", date: "", draft: false, category: "" }
   const lines = fm.split("\n")
   let i = 0
   while (i < lines.length) {
@@ -46,19 +47,15 @@ function parseMeta(fm: string): Meta {
     if (!m) { i++; continue }
     const [, key, rawVal] = m
     if (key === "tags") {
-      const tags: string[] = []
       i++
-      while (i < lines.length && lines[i].match(/^\s*-\s+/)) {
-        tags.push(unquote(lines[i].replace(/^\s*-\s+/, "")))
-        i++
-      }
-      meta.tags = tags
+      while (i < lines.length && lines[i].match(/^\s*-\s+/)) i++
       continue
     }
     if (key === "title") meta.title = unquote(rawVal)
     else if (key === "summary") meta.summary = unquote(rawVal)
     else if (key === "date") meta.date = unquote(rawVal)
     else if (key === "draft") meta.draft = rawVal.trim() === "true"
+    else if (key === "category") meta.category = unquote(rawVal)
     i++
   }
   return meta
@@ -70,8 +67,7 @@ function serializeMeta(meta: Meta): string {
     `summary: ${quote(meta.summary)}`,
     `date: ${quote(meta.date)}`,
     `draft: ${meta.draft ? "true" : "false"}`,
-    `tags:`,
-    ...meta.tags.map((t) => `- ${t}`),
+    `category: ${quote(meta.category)}`,
   ]
   return lines.join("\n")
 }
@@ -93,16 +89,17 @@ type RewriteState = {
   original: string
   rewritten: string
   error: string
+  top: number
+  left: number
 }
 
 export default function BlogEditor(props: { slug: string; collection: string }) {
   const [mode, setMode] = createSignal<Mode>("idle")
   const [pw, setPw] = createSignal("")
   const [err, setErr] = createSignal("")
-  const [meta, setMeta] = createSignal<Meta>({ title: "", summary: "", date: "", draft: false, tags: [] })
-  const [tagsInput, setTagsInput] = createSignal("")
+  const [meta, setMeta] = createSignal<Meta>({ title: "", summary: "", date: "", draft: false, category: "" })
   const [rewrite, setRewrite] = createSignal<RewriteState>({
-    visible: false, loading: false, from: 0, to: 0, original: "", rewritten: "", error: "",
+    visible: false, loading: false, from: 0, to: 0, original: "", rewritten: "", error: "", top: 0, left: 0,
   })
   let editor: Editor | null = null
   let editorEl: HTMLDivElement | undefined
@@ -156,7 +153,6 @@ export default function BlogEditor(props: { slug: string; collection: string }) 
     const { fm, body } = splitFrontmatter(content)
     const m = parseMeta(fm)
     setMeta(m)
-    setTagsInput(m.tags.join(", "))
     setMode("editing")
     queueMicrotask(() => mountEditor(body))
   }
@@ -184,11 +180,7 @@ export default function BlogEditor(props: { slug: string; collection: string }) 
     if (!editor) return
     setMode("saving")
     const md = (editor.storage as any).markdown.getMarkdown() as string
-    const updated: Meta = {
-      ...meta(),
-      tags: tagsInput().split(",").map((t) => t.trim()).filter(Boolean),
-    }
-    const full = joinFrontmatter(serializeMeta(updated), md)
+    const full = joinFrontmatter(serializeMeta(meta()), md)
     const r = await api(`/post/${props.collection}/${props.slug}`, {
       method: "PUT",
       body: JSON.stringify({ content: full }),
@@ -245,7 +237,21 @@ export default function BlogEditor(props: { slug: string; collection: string }) 
     const text = editor.state.doc.textBetween(from, to, "\n", "\n").trim()
     if (!text) return
     const fullMd = (editor.storage as any).markdown.getMarkdown() as string
-    setRewrite({ visible: true, loading: true, from, to, original: text, rewritten: "", error: "" })
+    const startCoords = editor.view.coordsAtPos(from)
+    const endCoords = editor.view.coordsAtPos(to)
+    const cardW = 480
+    const cardEstH = 360
+    const margin = 12
+    const vw = window.innerWidth
+    const vh = window.innerHeight
+    let left = Math.min(endCoords.right + margin, vw - cardW - margin)
+    if (left < margin) {
+      left = Math.max(margin, Math.min(startCoords.left, vw - cardW - margin))
+    }
+    let top = startCoords.top
+    if (top + cardEstH > vh - margin) top = Math.max(margin, vh - cardEstH - margin)
+    if (top < margin) top = margin
+    setRewrite({ visible: true, loading: true, from, to, original: text, rewritten: "", error: "", top, left })
     try {
       const r = await api(`/rewrite`, {
         method: "POST",
@@ -273,11 +279,11 @@ export default function BlogEditor(props: { slug: string; collection: string }) 
     const s = rewrite()
     if (!s.rewritten) return
     editor.chain().focus().insertContentAt({ from: s.from, to: s.to }, s.rewritten).run()
-    setRewrite({ visible: false, loading: false, from: 0, to: 0, original: "", rewritten: "", error: "" })
+    setRewrite({ visible: false, loading: false, from: 0, to: 0, original: "", rewritten: "", error: "", top: 0, left: 0 })
   }
 
   function cancelRewrite() {
-    setRewrite({ visible: false, loading: false, from: 0, to: 0, original: "", rewritten: "", error: "" })
+    setRewrite({ visible: false, loading: false, from: 0, to: 0, original: "", rewritten: "", error: "", top: 0, left: 0 })
   }
 
   function cancel() {
@@ -367,13 +373,15 @@ export default function BlogEditor(props: { slug: string; collection: string }) 
               />
             </label>
             <label class="grid gap-1 text-sm">
-              <span class="opacity-70">태그 (콤마로 구분)</span>
-              <input
-                type="text"
-                value={tagsInput()}
-                onInput={(e) => setTagsInput(e.currentTarget.value)}
+              <span class="opacity-70">카테고리</span>
+              <select
+                value={meta().category}
+                onInput={(e) => setMeta({ ...meta(), category: e.currentTarget.value })}
                 class="px-3 py-1.5 border rounded bg-transparent border-black/30 dark:border-white/30"
-              />
+              >
+                <option value="">(선택)</option>
+                {CATEGORIES.map((c) => <option value={c}>{c}</option>)}
+              </select>
             </label>
           </div>
           <label class="flex items-center gap-2 text-sm">
@@ -418,9 +426,10 @@ export default function BlogEditor(props: { slug: string; collection: string }) 
       </Show>
 
       <Show when={rewrite().visible}>
-        <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={cancelRewrite}>
+        <div class="fixed inset-0 z-50" onClick={cancelRewrite}>
           <div
-            class="bg-white dark:bg-neutral-900 text-black dark:text-white rounded-lg shadow-xl max-w-2xl w-full p-5 grid gap-3"
+            class="absolute bg-white dark:bg-neutral-900 text-black dark:text-white rounded-lg shadow-xl border border-black/15 dark:border-white/20 p-4 grid gap-3"
+            style={{ top: `${rewrite().top}px`, left: `${rewrite().left}px`, width: "480px", "max-width": "calc(100vw - 24px)" }}
             onClick={(e) => e.stopPropagation()}
           >
             <div class="text-sm font-semibold opacity-70">톤 다시 쓰기</div>

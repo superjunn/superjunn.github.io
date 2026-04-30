@@ -3,10 +3,7 @@ title: "Telegram Claude Bot — 폰에서 쓰는 개인 AI 에이전트"
 summary: "Claude Code를 라즈베리파이에 얹고 Telegram으로 연결해서, 어디서든 자연어로 집 서버/데탑을 조작하고 AI 응답을 받는 개인 에이전트."
 date: "Apr 11 2026"
 draft: false
-tags:
-- Home Automation
-- Raspberry Pi
-- Claude Code
+category: "Engineering"
 ---
 
 ## 한 줄 요약

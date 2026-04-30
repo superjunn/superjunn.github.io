@@ -3,9 +3,7 @@ title: "DOS에서 GUI로 — Computer Use가 가져올 두 번째 혁명"
 summary: "AI의 진짜 붐은 아직 오지 않았다. Computer Use와 Cowork이 가져올 접근성 혁명에 대하여."
 date: "Apr 03 2026"
 draft: false
-tags:
-- AI
-- Essay
+category: "Essay"
 ---
 
 ## 우리는 아직 챗봇 시대에 살고 있다

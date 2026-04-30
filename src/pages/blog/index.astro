@@ -10,7 +10,7 @@ const posts = (await getCollection("blog"))
   .filter((post) => !post.data.draft)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
-const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort(
+const categories = [...new Set(posts.map((post) => post.data.category))].sort(
   (a, b) => a.localeCompare(b),
 );
 
@@ -38,7 +38,7 @@ const estimated_initial_size =
       <SearchCollection
         client:load
         entry_name={"posts"}
-        tags={tags}
+        categories={categories}
         data={posts}
       />
     </div>

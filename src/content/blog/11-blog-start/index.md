@@ -3,8 +3,7 @@ title: "블로그 시작"
 summary: "공부는 언제든 save & load가 가능해야 한다. 코딩은 블로그에, 항공우주는 노터빌리티에 남기기로."
 date: "Jun 28 2022"
 draft: false
-tags:
-- Misc
+category: "Essay"
 ---
 
 대학 이후로의 공부는 언제든 save & load 가 가능해야 한다고 했습니다.

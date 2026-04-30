@@ -3,9 +3,7 @@ title: "WOL 설정하기"
 summary: "WOL + Parsec 조합으로 밖에서도 집 데스크탑을 켜고 원격 제어하기. 추석에 맥북만 가져가도 기숙사 데탑 쓰는 꿀팁."
 date: "Oct 05 2022"
 draft: false
-tags:
-- WOL
-- Dev Env
+category: "devenv"
 ---
 
 맥북 - 데스크탑

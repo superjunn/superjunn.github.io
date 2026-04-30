@@ -3,8 +3,7 @@ title: "마크다운 사용법 (README.md)"
 summary: "마크다운 문법이 정리돼있는 Gist 링크 북마크 메모."
 date: "Sep 10 2022"
 draft: false
-tags:
-- Markdown
+category: "devenv"
 ---
 
 [https://gist.github.com/ihoneymon/652be052a0727ad59601](https://gist.github.com/ihoneymon/652be052a0727ad59601)

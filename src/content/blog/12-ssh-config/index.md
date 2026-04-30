@@ -3,9 +3,7 @@ title: "ssh config 파일 만들어서 ssh 접속 편하게 하기"
 summary: "~/.ssh/config에 Host 별칭 등록해두면 IP 복붙 없이 `ssh gcp` 한 줄로 접속 가능."
 date: "Sep 03 2022"
 draft: false
-tags:
-- SSH
-- Dev Env
+category: "devenv"
 ---
 
 개인적으로 공부할 때 간단하게 이용하기 위해 Gcp에서 무료로 만들어놓은 리눅스 서버가 있다.

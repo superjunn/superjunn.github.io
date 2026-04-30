@@ -3,10 +3,7 @@ title: "FC Online 매일 이벤트 수령을 완전 자동화한 이야기"
 summary: "매일 아침 7:30, 라즈베리파이가 데탑을 깨우고 FC Online에 자동 로그인 → 감독모드 20판 → 4시간 뒤 웹이벤트 수령 → 절전. 파이·데탑·텔레그램·Claude Code(SendInput + Claude in Chrome) 조합으로 만든 3티어 자동화."
 date: "Apr 13 2026"
 draft: false
-tags:
-- Home Automation
-- Raspberry Pi
-- Claude Code
+category: "Engineering"
 ---
 
 ## 하기 싫은데 매일 해야 되는 일

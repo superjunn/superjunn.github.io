@@ -3,8 +3,7 @@ title: "Git Unstage"
 summary: "`git add` 잘못 때렸을 때 `git restore --staged .` 한 줄로 원상복구."
 date: "Sep 10 2022"
 draft: false
-tags:
-- Git
+category: "devenv"
 ---
 
 git add 를 잘못한 경우,,

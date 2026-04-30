@@ -3,9 +3,7 @@ title: "FFT에서 Window 함수가 필요한 이유"
 summary: "Spectral Leakage가 뭔지, Rectangular/Hann/Hamming/Blackman Window가 각각 어떻게 다른지, 실무에서 어떻게 고르는지 정리."
 date: "Apr 09 2026"
 draft: false
-tags:
-- GNSS
-- Signal Processing
+category: "Engineering"
 ---
 
 ## FFT는 신호가 무한히 반복된다고 가정한다

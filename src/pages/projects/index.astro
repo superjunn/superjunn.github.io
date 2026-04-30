@@ -11,8 +11,8 @@ const projects = (await getCollection("projects"))
   .filter((project) => !project.data.draft)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 
-const tags = [
-  ...new Set(projects.flatMap((project) => project.data.tags)),
+const categories = [
+  ...new Set(projects.map((project) => project.data.category)),
 ].sort((a, b) => a.localeCompare(b));
 
 const estimated_initial_size =
@@ -39,7 +39,7 @@ const estimated_initial_size =
       <SearchCollection
         client:load
         entry_name={"projects"}
-        tags={tags}
+        categories={categories}
         data={projects}
       />
     </div>

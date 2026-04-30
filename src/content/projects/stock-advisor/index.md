@@ -3,10 +3,7 @@ title: "Stock Advisor — 한국 주식 분석 봇 + 웹, 그리고 핀트로 �
 summary: "텔레그램 봇 + 웹 플랫폼 + XGBoost 앙상블 + 강화학습 모델까지 쌓다가, 결국 '핀트'가 거의 똑같은 걸 더 잘 하고 있다는 걸 발견하고 거기로 넘어간 사이드 프로젝트의 전말."
 date: "Apr 10 2026"
 draft: false
-tags:
-- Finance
-- Machine Learning
-- Home Automation
+category: "Engineering"
 ---
 
 ## 시작은 간단했다

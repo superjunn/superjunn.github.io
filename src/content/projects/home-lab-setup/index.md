@@ -3,10 +3,7 @@ title: "Home Lab — 자취방 공유기 · 라즈베리파이 · 데스크탑 �
 summary: "24/7 켜둔 라즈베리파이를 게이트웨이로 두고, 데탑은 필요할 때만 WOL로 깨우는 저전력 홈 서버 구성."
 date: "Apr 12 2026"
 draft: false
-tags:
-- Home Lab
-- Raspberry Pi
-- Networking
+category: "devenv"
 ---
 
 ## 전체 그림

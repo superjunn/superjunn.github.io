@@ -3,10 +3,7 @@ title: "Pully News Bot — 매일 아침 지정학 다이제스트, 나만의 �
 summary: "세상의 이슈를 계속 따라가고 싶어서 만든 뉴스 봇. 그냥 헤드라인이 아니라, KAIST 이승욱 교수님의 지정학 프레임으로 한 번 걸러서 매일 아침 텔레그램으로 받는다."
 date: "Apr 10 2026"
 draft: false
-tags:
-- Geopolitics
-- News Digest
-- Claude Code
+category: "Engineering"
 ---
 
 ## 강의실에서 가져온 렌즈
