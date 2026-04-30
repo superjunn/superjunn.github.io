@@ -8,7 +8,12 @@ import { BLOG } from "@consts";
 
 const posts = (await getCollection("blog"))
   .filter((post) => !post.data.draft)
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+  .sort((a, b) => {
+    const ap = a.data.pinned ? 1 : 0;
+    const bp = b.data.pinned ? 1 : 0;
+    if (ap !== bp) return bp - ap;
+    return b.data.date.getTime() - a.data.date.getTime();
+  });
 
 const categories = [...new Set(posts.map((post) => post.data.category))].sort(
   (a, b) => a.localeCompare(b),

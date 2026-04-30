@@ -37,7 +37,10 @@ export default function SearchCollection({ entry_name, data, categories }: Props
         entry.data.category.toLowerCase() === String(v).toLowerCase()
       )
     });
-    setCollection(descending() ? filtered.toReversed() : filtered)
+    const ordered = descending() ? filtered.toReversed() : filtered
+    const pinned = ordered.filter((e) => (e.data as any).pinned)
+    const rest = ordered.filter((e) => !(e.data as any).pinned)
+    setCollection([...pinned, ...rest])
   })
 
   function toggleDescending() {

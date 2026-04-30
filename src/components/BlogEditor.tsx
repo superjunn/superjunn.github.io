@@ -22,7 +22,7 @@ function joinFrontmatter(fm: string, body: string): string {
   return `---\n${fm}\n---\n\n${body.replace(/^\n+/, "")}`
 }
 
-type Meta = { title: string; summary: string; date: string; draft: boolean; category: string }
+type Meta = { title: string; summary: string; date: string; draft: boolean; category: string; pinned: boolean }
 const CATEGORIES = ["devenv", "Essay", "Engineering", "Geopolitics/Social/History"]
 
 function unquote(s: string): string {
@@ -38,7 +38,7 @@ function quote(s: string): string {
 }
 
 function parseMeta(fm: string): Meta {
-  const meta: Meta = { title: "", summary: "", date: "", draft: false, category: "" }
+  const meta: Meta = { title: "", summary: "", date: "", draft: false, category: "", pinned: false }
   const lines = fm.split("\n")
   let i = 0
   while (i < lines.length) {
@@ -56,6 +56,7 @@ function parseMeta(fm: string): Meta {
     else if (key === "date") meta.date = unquote(rawVal)
     else if (key === "draft") meta.draft = rawVal.trim() === "true"
     else if (key === "category") meta.category = unquote(rawVal)
+    else if (key === "pinned") meta.pinned = rawVal.trim() === "true"
     i++
   }
   return meta
@@ -68,6 +69,7 @@ function serializeMeta(meta: Meta): string {
     `date: ${quote(meta.date)}`,
     `draft: ${meta.draft ? "true" : "false"}`,
     `category: ${quote(meta.category)}`,
+    `pinned: ${meta.pinned ? "true" : "false"}`,
   ]
   return lines.join("\n")
 }
@@ -97,7 +99,7 @@ export default function BlogEditor(props: { slug: string; collection: string }) 
   const [mode, setMode] = createSignal<Mode>("idle")
   const [pw, setPw] = createSignal("")
   const [err, setErr] = createSignal("")
-  const [meta, setMeta] = createSignal<Meta>({ title: "", summary: "", date: "", draft: false, category: "" })
+  const [meta, setMeta] = createSignal<Meta>({ title: "", summary: "", date: "", draft: false, category: "", pinned: false })
   const [rewrite, setRewrite] = createSignal<RewriteState>({
     visible: false, loading: false, from: 0, to: 0, original: "", rewritten: "", error: "", top: 0, left: 0,
   })
@@ -391,6 +393,14 @@ export default function BlogEditor(props: { slug: string; collection: string }) 
               onChange={(e) => setMeta({ ...meta(), draft: e.currentTarget.checked })}
             />
             <span>draft (공개 안 함)</span>
+          </label>
+          <label class="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={meta().pinned}
+              onChange={(e) => setMeta({ ...meta(), pinned: e.currentTarget.checked })}
+            />
+            <span>pinned (목록 최상단 고정)</span>
           </label>
         </div>
         <article>

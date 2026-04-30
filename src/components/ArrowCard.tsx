@@ -19,6 +19,11 @@ export default function ArrowCard({ entry, pill }: Props) {
           <div class="text-sm uppercase">
             {formatDate(entry.data.date)}
           </div>
+          {(entry.data as any).pinned && (
+            <div class="text-xs uppercase px-2 py-0.5 rounded-full border border-black/30 dark:border-white/40 text-black/70 dark:text-white/70">
+              pinned
+            </div>
+          )}
         </div>
         <div class="font-semibold mt-3 text-black dark:text-white line-clamp-2">
           {entry.data.title}
