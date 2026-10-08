@@ -139,7 +139,14 @@ export default function BlogEditor(props: { slug: string; collection: string }) 
 
   async function loadAndOpen() {
     setMode("loading")
-    const r = await api(`/post/${props.collection}/${props.slug}`)
+    let r: Response
+    try {
+      r = await api(`/post/${props.collection}/${props.slug}`)
+    } catch {
+      setMode("idle")
+      setErr("서버 연결 실패")
+      return
+    }
     if (r.status === 401) {
       localStorage.removeItem(TOKEN_KEY)
       setMode("auth")
@@ -148,7 +155,7 @@ export default function BlogEditor(props: { slug: string; collection: string }) 
     }
     if (!r.ok) {
       setMode("idle")
-      setErr("로드 실패")
+      setErr(r.status === 404 ? "서버에 이 글이 없음" : `로드 실패 (${r.status})`)
       return
     }
     const { content } = await r.json()
@@ -175,7 +182,6 @@ export default function BlogEditor(props: { slug: string; collection: string }) 
       content: body,
       autofocus: "end",
     })
-    ;(editor.storage as any).markdown.set(body)
   }
 
   async function save() {
@@ -318,6 +324,9 @@ export default function BlogEditor(props: { slug: string; collection: string }) 
           </svg>
           edit on website
         </button>
+        <Show when={err()}>
+          <span class="ml-3 text-sm text-red-500">{err()}</span>
+        </Show>
       </Show>
 
       <Show when={mode() === "auth"}>
